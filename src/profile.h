@@ -11,18 +11,18 @@ struct imap_arg;
 struct imap_client;
 
 struct profile_client {
-	const char *name;
-	const char *protocol;
-	unsigned int percentage;
-	unsigned int connection_max_count;
-	bool pop3_keep_mails;
-	bool imap_idle;
-	const char *imap_fetch_immediate;
-	const char *imap_fetch_manual;
-	const char *imap_search_query;
-	unsigned int imap_status_interval;
-	unsigned int login_interval;
-    const char *imap_metadata_extension;
+  const char *name;
+  const char *protocol;
+  unsigned int percentage;
+  unsigned int connection_max_count;
+  bool pop3_keep_mails;
+  bool imap_idle;
+  const char *imap_fetch_immediate;
+  const char *imap_fetch_manual;
+  const char *imap_search_query;
+  unsigned int imap_status_interval;
+  unsigned int login_interval;
+  const char *imap_metadata_extension;
 };
 ARRAY_DEFINE_TYPE(profile_client, struct profile_client *);
 
@@ -71,24 +71,23 @@ struct profile_user {
 ARRAY_DEFINE_TYPE(profile_user, struct profile_user *);
 
 struct profile {
-	pool_t pool;
-	const char *path;
+  pool_t pool;
+  const char *path;
 
-	ARRAY_TYPE(profile_user) users;
-	ARRAY_TYPE(profile_client) clients;
-	unsigned int lmtp_port;
-	unsigned int lmtp_max_parallel_count;
-	unsigned int total_user_count;
-	unsigned int rampup_time;
+  ARRAY_TYPE(profile_user) users;
+  ARRAY_TYPE(profile_client) clients;
+  unsigned int lmtp_port;
+  unsigned int lmtp_max_parallel_count;
+  unsigned int total_user_count;
+  unsigned int rampup_time;
+  const char *influx_db_write;
 };
 
 struct profile *profile_parse(const char *path);
 int imap_client_profile_send_more_commands(struct client *client);
-int imap_client_profile_handle_untagged(struct imap_client *client,
-					const struct imap_arg *args);
+int imap_client_profile_handle_untagged(struct imap_client *client, const struct imap_arg *args);
 
-void profile_add_users(struct profile *profile, ARRAY_TYPE(user) *users,
-		       struct mailbox_source *source);
+void profile_add_users(struct profile *profile, ARRAY_TYPE(user) * users, struct mailbox_source *source);
 
 void profile_deinit(void);
 
