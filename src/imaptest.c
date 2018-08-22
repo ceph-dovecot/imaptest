@@ -190,8 +190,6 @@ static void print_timeout(void *context ATTR_UNUSED) {
   }
   int total_msg = 0;
 
-  // string_t *msg = t_str_new(128);
-  // str_printfa(msg, "imaptest_msg,");
   for (i = 1; i < STATE_COUNT; i++) {
     if (!STATE_IS_VISIBLE(i))
       continue;
@@ -201,22 +199,11 @@ static void print_timeout(void *context ATTR_UNUSED) {
 
     sprintf(str, "imaptest_msg,state=%s value=%d,avg_time_ms=%.4f\n", states[i].name, counters[i], mean[i]);
 
-    // printf("%s", str);
-    // string_t *state_msg = t_str_new(128);
-    // str_printfa(state_msg, "imaptest_msg,state=%s value=%d\n", states[i].name, counters[i]);
-
-    // buffer_append(msg, state_msg->data, state_msg->used);
-
     total_msg += counters[i];
     mean[i] = 0;
     counters[i] = 0;
     send_statistics(str);
-    // send_statistics(NULL);
   }
-  // string_t *end = t_str_new(1);
-  // str_printfa(end, "\n", total_msg);
-  // buffer_append(msg, end->data, end->used);
-  // send_statistics(msg->data);
 
   stalled = FALSE;
   banner_waits = 0;
@@ -235,6 +222,14 @@ static void print_timeout(void *context ATTR_UNUSED) {
       stall_count++;
     if (stalled_secs >= conf.stalled_disconnect_timeout && conf.stalled_disconnect_timeout > 0)
       client_disconnect(c[i]);
+  }
+  if (profile != NULL) {
+    if (profile->client_id != NULL) {
+      char str[128];
+      sprintf(str, "imaptest_clients,id=%s value=%d,total=%d\n", profile->client_id, (clients_count - banner_waits),
+              clients_count);
+      send_statistics(str);
+    }
   }
   printf("%3d/%3d", (clients_count - banner_waits), clients_count);
   if (stall_count > 0)

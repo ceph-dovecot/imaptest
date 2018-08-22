@@ -81,6 +81,7 @@ struct profile {
   unsigned int total_user_count;
   unsigned int rampup_time;
   const char *influx_db_write;
+  const char *client_id;
 };
 
 struct profile *profile_parse(const char *path);
