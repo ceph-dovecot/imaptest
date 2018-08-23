@@ -57,6 +57,8 @@ struct state states[STATE_COUNT] = {
 unsigned int counters[STATE_COUNT], total_counters[STATE_COUNT];
 float mean[STATE_COUNT];
 int bad_requests;
+int timeout_requests;
+int cont_requests;
 unsigned int timer_counts[STATE_COUNT];
 unsigned long long timers[STATE_COUNT];
 
@@ -732,7 +734,8 @@ static int client_handle_cmd_reply(struct imap_client *client, struct command *c
       }
       break;
     case REPLY_NO:
-      bad_requests++;
+      timeout_requests++;
+
       switch (cmd->state) {
         case STATE_COPY:
         case STATE_MCREATE:
@@ -790,7 +793,7 @@ static int client_handle_cmd_reply(struct imap_client *client, struct command *c
       imap_client_input_warn(client, "%s replied BAD", states[cmd->state].name);
       return -1;
     case REPLY_CONT:
-      bad_requests++;
+      cont_requests++;
       if (client->idle_wait_cont) {
         client->idle_wait_cont = FALSE;
         return 0;
