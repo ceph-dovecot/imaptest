@@ -197,15 +197,15 @@ static void print_timeout(void *context ATTR_UNUSED) {
     total_counters[i] += counters[i];
     char str[128];
     if (profile != NULL) {
-      if (profile->client_id != NULL) {
+      if (profile->client_id != NULL && counters[i] > 0) {
         sprintf(str, "imaptest_msg,state=%s,id=%s value=%d,avg_time_ms=%.4f\n", states[i].name, profile->client_id,
                 counters[i], mean[i]);
+        send_statistics(str);
       }
     }
     total_msg += counters[i];
     mean[i] = 0;
     counters[i] = 0;
-    send_statistics(str);
   }
 
   stalled = FALSE;
@@ -229,9 +229,10 @@ static void print_timeout(void *context ATTR_UNUSED) {
   if (profile != NULL) {
     if (profile->client_id != NULL) {
       char str[128];
-      sprintf(str, "imaptest_clients,id=%s value=%d,total=%d\n", profile->client_id, (clients_count - banner_waits),
-              clients_count);
+      sprintf(str, "imaptest_clients,id=%s value=%d,total=%d,bad_requests=%d\n", profile->client_id,
+              (clients_count - banner_waits), clients_count, bad_requests);
       send_statistics(str);
+      bad_requests = 0;
     }
   }
   printf("%3d/%3d", (clients_count - banner_waits), clients_count);
@@ -551,6 +552,8 @@ int main(int argc ATTR_UNUSED, char *argv[]) {
   conf.domains_rand_count = DOMAIN_RAND;
 
   to_stop = NULL;
+
+  bad_requests = 0;
 
   for (argv++; *argv != NULL; argv++) {
     value = strchr(*argv, '=');
