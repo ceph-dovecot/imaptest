@@ -63,7 +63,7 @@ export CFLAGS="%{optflags}"
 export CFLAGS="$CFLAGS -fpic -DPIC"
 export PANDOC=false
 
-%define imaptest_dir /opt/app/dovecot/bin/
+%define dovecot_base /opt/app/dovecot
 #git submodule update --init
 #build dovecot with static libs
 
@@ -84,13 +84,14 @@ git apply ../dovecot_patches/0001-removed-doc.patch
 %configure \
         --enable-maintainer-mode \
         --with-docs=no \
-        --without-shared-libs
+        --without-shared-libs \
+        --prefix=%{dovecot_base}
 %{__make}
 cd ..
 ./autogen.sh
 %configure \
 	--enable-maintainer-mode \
-    --prefix=%{imaptest_dir}
+        --prefix=%{dovecot_base}/bin \
 	--with-dovecot=%{dovecot_src}
 %{__make}
 
@@ -108,7 +109,7 @@ find src -type f -name \*.o -delete
 %files
 %defattr(-,root,root)
 
-%{imaptest_dir}/imatest
+%{dovecot_base}/bin/imaptest
 
 %changelog
 
