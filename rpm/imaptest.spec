@@ -108,7 +108,9 @@ find src -type f -name \*.o -delete
 
 %files
 %defattr(-,root,root)
-
+%dir /opt/app/
+%dir %{dovecot_home}/
+%dir %{dovecot_home}/bin
 %{dovecot_base}/bin/imaptest
 
 %changelog
